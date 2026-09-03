@@ -18,6 +18,56 @@ export class BudgetLimitStrategy implements AuditStrategy {
     // 4. Identify overages (categories where spending exceeds the budget).
     // 5. Format and return a text-based audit report outlining limits, actuals, overage amounts, percentages, and lists of transactions causing the overage.
 
+    //fetch budget limits from remote database
+    const budgetLimits = await BudgetService.getCategoryBudgets();
+
+    //filter out non expenses
+    transactions.filter(transaction => {
+      transaction.amount < 0;
+    });
+
+    //group expenses by category
+    const categoried = transactions.reduce<Record<string, Transaction[]>>(
+      (categories, transaction) => {
+        if (!categories[transaction.category]) {
+          categories[transaction.category] = [];
+        }
+
+        categories[transaction.category].push(transaction);
+
+        return categories;
+      }, 
+      {}
+    );
+
+    //sum total expenses for each category
+    let totalExpenses: Record<string, number> = {};
+    Object.keys(categoried).forEach(category => {
+      totalExpenses[category] = 0;
+      categoried[category].forEach((transaction:Transaction) => {
+        totalExpenses[category] += -transaction.amount;
+      });
+    });
+
+    //Compare total spending to budget limit by category
+    let expenseVSBudget: Record<string, number> = {};
+    Object.keys(totalExpenses).forEach(category => {
+      expenseVSBudget[category] = budgetLimits[category] - totalExpenses[category];
+    });
+
+    //get categories that overspent and calculate overspend[0] and percentage exceeded[1]
+    let exceededCategories: Record<string, number[]> = {};
+    Object.keys(expenseVSBudget).forEach(category =>{
+      if (expenseVSBudget[category] < 0) {
+        exceededCategories[category][0] = -expenseVSBudget[category];
+        exceededCategories[category][1] = budgetLimits[category] / totalExpenses[category] * 100;
+      }
+    });
+
+    //summary output
+    
+
+
     throw new Error('Method not implemented.');
   }
 }
