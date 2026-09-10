@@ -11,6 +11,7 @@ describe('BudgetLimitStrategy (Feature 1)', () => {
     vi.restoreAllMocks();
   });
 
+
   // Example of how to write and mock in your tests:
   //
   // it('should correctly identify categories that are over budget', async () => {

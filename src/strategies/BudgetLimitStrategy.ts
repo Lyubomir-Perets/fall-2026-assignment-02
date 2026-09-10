@@ -1,3 +1,4 @@
+import { toUSVString } from 'util';
 import { Transaction } from '../models.js';
 import { BudgetService } from '../services/BudgetService.js';
 import { AuditStrategy } from './AuditStrategy.js';
@@ -41,7 +42,7 @@ export class BudgetLimitStrategy implements AuditStrategy {
     );
 
     //sum total expenses for each category
-    let totalExpenses: Record<string, number> = {};
+    const totalExpenses: Record<string, number> = {};
     Object.keys(categoried).forEach(category => {
       totalExpenses[category] = 0;
       categoried[category].forEach((transaction:Transaction) => {
@@ -50,13 +51,13 @@ export class BudgetLimitStrategy implements AuditStrategy {
     });
 
     //Compare total spending to budget limit by category
-    let expenseVSBudget: Record<string, number> = {};
+    const expenseVSBudget: Record<string, number> = {};
     Object.keys(totalExpenses).forEach(category => {
       expenseVSBudget[category] = budgetLimits[category] - totalExpenses[category];
     });
 
     //get categories that overspent and calculate overspend[0] and percentage exceeded[1]
-    let exceededCategories: Record<string, number[]> = {};
+    const exceededCategories: Record<string, number[]> = {};
     Object.keys(expenseVSBudget).forEach(category =>{
       if (expenseVSBudget[category] < 0) {
         exceededCategories[category][0] = -expenseVSBudget[category];
@@ -64,9 +65,31 @@ export class BudgetLimitStrategy implements AuditStrategy {
       }
     });
 
-    //summary output
-    
+    //SUMARRY OUTPUT
 
+    //Summary
+    let report = "Summary Report\n";
+    let num = 0;
+    Object.keys(totalExpenses).forEach(category => {
+      report += `\n${num}.`+ category 
+      + ' -> Budget Limit: ' + budgetLimits[category]
+      + ' , Actual Spending: ' + totalExpenses[category];
+    });
+
+    //Over Budget Categories
+    num = 0;
+    report += "\nOver-Budget Categories";
+    Object.keys(exceededCategories).forEach(category => {
+      report += `\n${num}.`+ category
+      + ' -> Overage Amount: ' + exceededCategories[category][0]
+      + ' , Overage Percentage: ' + exceededCategories[category][1]
+      + '\nList of all transactions leading to overage:';
+      categoried[category].forEach(transaction => {
+        report += '\n  -' + transaction;
+      })
+    });
+
+    return report;
 
     throw new Error('Method not implemented.');
   }
