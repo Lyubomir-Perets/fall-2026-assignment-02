@@ -13,21 +13,21 @@ describe('AnomalyDetectionStrategy (Feature 2)', () => {
 
   // Example of how to write and mock in your tests:
   //
-  // it('should detect outlier transactions exceeding threshold', async () => {
-  //   const mockRules = { maxTransactionAmount: 500.00, flaggedStatuses: ['flagged'] };
-  //   const spy = vi.spyOn(AnomalyRulesService, 'getRules').mockResolvedValue(mockRules);
-  //
-  //   const testTransactions: Transaction[] = [
-  //     { id: '1', date: '2026-05-01', amount: -600.00, category: 'Shopping', description: 'Laptop', status: 'completed' }, // Outlier
-  //     { id: '2', date: '2026-05-02', amount: -100.00, category: 'Food', description: 'Grocery', status: 'completed' }, // Normal
-  //   ];
-  //
-  //   const result = await strategy.execute(testTransactions);
-  //
-  //   expect(spy).toHaveBeenCalled();
-  //   expect(result).toContain('Laptop');
-  //   expect(result).toContain('Outlier');
-  // });
+  it('should detect outlier transactions exceeding threshold', async () => {
+  const mockRules = { maxTransactionAmount: 500.00, flaggedStatuses: ['flagged'] };
+  const spy = vi.spyOn(AnomalyRulesService, 'getRules').mockResolvedValue(mockRules);
+  
+  const testTransactions: Transaction[] = [
+  { id: '1', date: '2026-05-01', amount: -600.00, category: 'Shopping', description: 'Laptop', status: 'completed' }, // Outlier
+  { id: '2', date: '2026-05-02', amount: -100.00, category: 'Food', description: 'Grocery', status: 'completed' }, // Normal
+  ];
+  
+  const result = await strategy.execute(testTransactions);
+  
+  expect(spy).toHaveBeenCalled();
+  expect(result).toContain('Laptop');
+  expect(result).toContain('Outlier');
+  });
 
   it.todo(
     'should detect outlier transactions exceeding the configured max amount limit',
