@@ -18,8 +18,15 @@ export class MultiCurrencyStrategy implements AuditStrategy {
     const requested = customParam?.toUpperCase() || 'EUR';
     const targetCurrency = requested && exchangeRates.rates[requested] !== undefined ? requested : 'EUR';  
     // 3. Look up the exchange rate for the target currency (throw an error if not found in rates).
-    
+    const rate = exchangeRates.rates[targetCurrency];
+    if (rate === undefined) {
+      throw new Error(`Exchange rate for ${targetCurrency} not found.`);
+    }
     // 4. Convert all transaction amounts to the target currency.
+    const converted = transactions.map((transaction) => ({
+      ...transaction,
+      amountUSD: transaction.amount, amountTarget: transaction.amount * rate,
+    }));
     // 5. Calculate total income, total expenses, and net balance in BOTH USD and target currency.
     // 6. Format and return a text-based audit report detailing conversion metrics, conversion rate used, and transaction summaries in both currencies.
 
