@@ -15,10 +15,8 @@ export class MultiCurrencyStrategy implements AuditStrategy {
     // 1. Call ExchangeRateService.getExchangeRates() asynchronously.
     const exchangeRates = await ExchangeRateService.getExchangeRates('USD');
     // 2. Identify the target currency from `customParam` (default to 'EUR' if invalid/not provided).
-    const excEUR = exchangeRates.rates[customParam || 'EUR'];
-    const excYEN = exchangeRates.rates[customParam || 'YEN'];
-    const excCAD = exchangeRates.rates[customParam || 'CAD'];
-    const excGBP = exchangeRates.rates[customParam || 'GBP'];
+    const requested = customParam?.toUpperCase() || 'EUR';
+    const targetCurrency = requested && exchangeRates.rates[requested] !== undefined ? requested : 'EUR';  
     // 3. Look up the exchange rate for the target currency (throw an error if not found in rates).
     
     // 4. Convert all transaction amounts to the target currency.
