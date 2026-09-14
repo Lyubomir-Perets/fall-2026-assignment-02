@@ -38,7 +38,19 @@ export class MultiCurrencyStrategy implements AuditStrategy {
     const netTGT = incomeTGT + expensesTGT;
     const avgTGT = avgUSD * rate;
     // 6. Format and return a text-based audit report detailing conversion metrics, conversion rate used, and transaction summaries in both currencies.
-
+    const lines : string[] = [];
+    lines.push(`Multi-Currency Audit Report`);
+    lines.push(`Target Currency: ${targetCurrency}`);
+    lines.push(`Exchange Rate (USD to ${targetCurrency}): ${rate}`);
+    lines.push(`Total Income (USD): ${incomeUSD.toFixed(2)}`);
+    lines.push(`Total Expenses (USD): ${expensesUSD.toFixed(2)}`);
+    lines.push(`Net Balance (USD): ${netUSD.toFixed(2)}`);
+    lines.push(`Average Transaction (USD): ${avgUSD.toFixed(2)}`);
+    lines.push(`Total Income (${targetCurrency}): ${incomeTGT.toFixed(2)}`);
+    lines.push(`Total Expenses (${targetCurrency}): ${expensesTGT.toFixed(2)}`);
+    lines.push(`Net Balance (${targetCurrency}): ${netTGT.toFixed(2)}`);
+    lines.push(`Average Transaction (${targetCurrency}): ${avgTGT.toFixed(2)}`);
+    return lines.join('\n');
     throw new Error('Method not implemented.');
   }
 }
