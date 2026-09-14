@@ -28,6 +28,15 @@ export class MultiCurrencyStrategy implements AuditStrategy {
       amountUSD: transaction.amount, amountTarget: transaction.amount * rate,
     }));
     // 5. Calculate total income, total expenses, and net balance in BOTH USD and target currency.
+    const incomeUSD = converted.filter(t => t.amountUSD > 0).reduce((sum, t) => sum + t.amountUSD, 0);
+    const expensesUSD = converted.filter(t => t.amountUSD < 0).reduce((sum, t) => sum + t.amountUSD, 0);
+    const netUSD = incomeUSD + expensesUSD;
+    const avgUSD = converted.reduce((sum, t) => sum + t.amountUSD, 0) / converted.length;
+
+    const incomeTGT = incomeUSD * rate;
+    const expensesTGT = expensesUSD * rate;
+    const netTGT = incomeTGT + expensesTGT;
+    const avgTGT = avgUSD * rate;
     // 6. Format and return a text-based audit report detailing conversion metrics, conversion rate used, and transaction summaries in both currencies.
 
     throw new Error('Method not implemented.');
