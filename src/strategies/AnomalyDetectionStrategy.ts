@@ -96,6 +96,7 @@ export class AnomalyDetectionStrategy implements AuditStrategy {
     lines.push(
       `Total flagged value:          $${totalFlaggedValue.toFixed(2)}`,
     );
+
     return lines.join('\n');
   }
 }
